@@ -1,0 +1,125 @@
+______Creation de projet firebase :
+Firebase, c'est un ensemble de services hébergés par Google. Toi tu vas en utiliser deux :
+	Authentication
+	Firestore
+
+Config Firebase ne pas etres s'ecuriser parcequ'il ne donne pas des acces, il permet juste d'identifier le projet. C'est les regle poser qui block les acces.
+Un projet Firebase sans règles est une maison dont l'adresse est publique et la porte grande ouverte
+
+
+au debut cette configuration est general qui peut te donne juste le fait avoir un projet firebase bien identifier, et apres tu creer d'autre objet pour l'auth ou la db avec firestore 
+
+____Creation d'objet d'auth:
+
+importer  getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+dans la page de confique pour utiliser auth dans la page auth.js
+
+import { auth } from "../js/firebase-config.js";
+
+et import {
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+puis ecrire une logique de connexion standard dans auth.js avec les fonctions signInWithEmailAndPassword et sendPasswordResetEmail
+
+
+_______Protection de page (etre connecter pour acceder) :
+onAuthStateChanged(auth, callback) est un observateur : on lui passe le service d'authentification (auth) et une fonction (callback). Il surveille en continu l'état de connexion, et exécute callback à chaque changement (chargement de page, connexion, déconnexion, expiration de session). Le callback reçoit un paramètre user : null si personne n'est connecté, ou les infos du compte sinon. Cette logique vit dans un fichier séparé (auth-guard.js) pour être réutilisée sur toutes les pages protégées, en chargeant ce fichier via une balise <script type="module"> dans le <head> de chacune. Ce n'est pas une vraie sécurité — juste une redirection de confort ; la vraie protection viendra plus tard des règles Firestore.
+
+
+
+
+_____Deconexion:
+
+La fonction est signOut(auth), importée depuis firebase-auth.js
+
+La déconnexion ne gère pas la redirection elle-même. signOut() fait deux choses : appeler firebaseSignOut(auth) (qui efface la session Firebase), puis rediriger manuellement avec window.location.replace(LOGIN_PAGE). La redirection manuelle est nécessaire ici parce qu'on veut .replace() (pas de retour arrière possible) — mais elle est redondante avec la vraie mécanique de fond : dès que firebaseSignOut termine, onAuthStateChanged (qui tourne déjà en continu sur la page) se redéclenche automatiquement avec user = null, et aurait fini par rediriger tout seul via le if(user===null) de callback. On a juste ajouté .replace() en plus pour un contrôle plus propre sur l'historique de navigation.
+
+etapes: Importer signOut du SDK sous un autre nom (as firebaseSignOut) — pour ne pas entrer en conflit avec ta propre fonction signOut exportée plus bas dans le même fichier.
+Écrire ta fonction signOut() "maison", qui encapsule l'appel Firebase + la redirection + la gestion d'erreur (try/catch), et l'exporter — comme ça, un bouton n'importe où peut l'importer et l'appeler sans connaître les détails internes.
+Enrichir le callback de onAuthStateChanged : quand user n'est pas null, appeler showSessionInProfileMenu(user) — c'est le point de couture entre "l'observateur qui sait qui est connecté" et "l'interface qui doit afficher cette info".
+Dans showSessionInProfileMenu : aller chercher les éléments du popup par leurs classes CSS (.profile-mail, .profile-status, .profile-logout), remplir l'email dynamiquement, puis attacher le clic du bouton déconnexion à ta fonction signOut().
+Protection contre le double-branchement : logoutBtn.dataset.bound garde en mémoire "j'ai déjà attaché mon écouteur ici" — utile si callback se redéclenche (ex. Firebase revérifie la session) sans dupliquer le clic
+
+
+
+
+
+
+
+
+
+
+
+Point 7 — Gestion des rôles (Administrateur / Utilisateur simple)
+Le problème de départ
+
+Firebase Authentication sait qui tu es (email, identifiant unique). Mais il ne sait pas si tu es administrateur ou utilisateur simple : cette notion n'existe pas chez lui. C'est à moi de l'ajouter.
+
+La solution choisie : les Custom Claims
+
+Un « custom claim » est une petite information personnalisée (ici { role: "administrateur" }) que Firebase attache directement au jeton d'authentification de l'utilisateur — le jeton étant la preuve d'identité que le navigateur reçoit à la connexion.
+
+Règle de sécurité fondamentale : seul du code de confiance, tournant en dehors du navigateur, peut attribuer un rôle. Sinon n'importe qui s'auto-déclarerait admin depuis sa console. C'est pour ça qu'il faut un script Node.js séparé.
+
+Ce que j'ai construit — 3 parties
+1. Un script d'administration (hors de l'appli)
+
+Dossier séparé firebase-admin-scripts/, contenant :
+
+Une clé de compte de service (fichier .json téléchargé depuis la console Firebase). ⚠️ Vrai secret — ne jamais mettre sur GitHub, contrairement à firebaseConfig qui est public.
+Le paquet firebase-admin (installé avec npm install firebase-admin).
+Le script assign-role.js.
+
+Ce script utilise le SDK Admin, qui contourne toutes les règles de sécurité — d'où la nécessité de l'isoler. Il s'exécute à la main avec node assign-role.js, jamais dans un navigateur.
+
+Sa fonction clé : setCustomUserClaims(uid, { role: "administrateur" }), où l'uid se récupère dans Firebase Console → Authentication → Users.
+
+⚠️ Cette fonction écrase les claims existants, elle ne les fusionne pas.
+
+2. Lire le rôle côté navigateur (dans auth-guard.js)
+
+Le rôle n'est pas dans l'objet user — il faut aller le chercher dans le jeton :
+
+js
+const tokenResult = await user.getIdTokenResult(true);
+const role = tokenResult.claims.role;
+const roleEffectif = role ?? "utilisateur";
+document.body.dataset.role = roleEffectif;
+
+Trois choses importantes ici :
+
+true force le rafraîchissement du jeton. Sans ça, le navigateur garde l'ancien jeton (renouvelé seulement toutes les heures) et ne verrait pas un rôle fraîchement attribué.
+?? "utilisateur" : si le compte n'a aucun rôle, on applique le moins permissif. En sécurité, le défaut ne doit jamais être le plus permissif.
+document.body.dataset.role pose data-role="..." sur le <body>. Avantage : accessible par tous les scripts ET par le CSS, sans problème de timing asynchrone.
+3. Adapter l'interface (HTML + CSS)
+
+Classe admin-only sur chaque bouton réservé aux administrateurs, puis dans le CSS :
+
+css
+.admin-only { display: none; }
+body[data-role="administrateur"] .admin-only { display: block; }
+
+Pourquoi cet ordre (cacher d'abord, révéler ensuite) : au chargement, data-role n'existe pas encore — le rôle arrive après un aller-retour réseau d'environ une seconde. Si la règle était inversée, les boutons s'afficheraient brièvement avant de disparaître (« flash »). Principe général : quand un état est incertain, partir du plus restrictif.
+
+Pourquoi en CSS et pas en JavaScript : la règle s'applique automatiquement à tout élément portant la classe, y compris ceux créés plus tard dynamiquement (les boutons des tableaux générés depuis Firestore).
+
+⚠️ Le point le plus important à retenir
+
+Tout ça n'est PAS de la sécurité. Un utilisateur peut ouvrir sa console navigateur, changer data-role en administrateur, et faire réapparaître tous les boutons.
+
+Ce n'est que du confort visuel : éviter de montrer des actions inutilisables.
+
+La vraie protection viendra des règles de sécurité Firestore (point 9), appliquées par le serveur de Google — celles-ci refuseront l'écriture même si l'utilisateur contourne entièrement l'interface.
+
+Limite actuelle à connaître
+
+L'attribution des rôles est manuelle : créer le compte dans la console, copier l'UID, lancer le script. Suffisant pour un parc interne où les comptes sont rares.
+
+Le projet utilise actuellement un serveur local Ollama. Une évolution vers une Cloud Function
+serait une architecture différente, à documenter séparément, et n'est pas nécessaire pour le fonctionnement actuel.
+
+
+
+

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Stocks & Licences - Norsys Afrique</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Applique le thème enregistré avant l'affichage (évite le "flash" blanc) -->
+  <script>
+    (function () {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+  <script type="module" src="../js/auth-guard.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../Assets/css/role-access.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="../Assets/Norsyslogo.png" alt="Norsys Afrique" class="logo-img logo-light">
+        <img src="../Assets/norsysdark.png" alt="Norsys Afrique" class="logo-img logo-dark">
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="../Dashboard/index.html">Tableau de bord</a></li>
+          <li><a href="../materiel/index.html">Matériel Dev &amp; QA</a></li>
+          <li><a href="../collaborateur/collaborateur.html">Collaborateurs</a></li>
+          <li class="active">
+            <a href="../Stock-et-Licences/index.html" aria-current="page">Stocks &amp; Licences</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="top-header">
+        <button class="menu-toggle" aria-label="Ouvrir la navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Rechercher par n° de série, modèle, licence...">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème">
+            <i class="fa-regular fa-moon"></i>
+          </button>
+          <button class="user-profile" aria-label="Profil utilisateur">
+            <i class="fa-solid fa-user"></i>
+          </button>
+          <div id="profileDropdown" class="profile-dropdown hidden">
+                            <div class="profile-session">
+                                <!-- Rempli dynamiquement depuis la session Firebase (js/auth-guard.js) -->
+                                <span class="profile-mail">Chargement de la session...</span>
+                                <span class="profile-status" hidden>
+                                    <span class="profile-status-dot" aria-hidden="true"></span>
+                                    Session active
+                                </span>
+                            </div>
+                            <button type="button" class="profile-logout">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Se déconnecter</span>
+                            </button>
+                            <p class="profile-error" role="alert"></p>
+                        </div>
+        </div>  
+      </header>
+
+      <div class="content-inventory">
+
+        <div class="page-title">
+          <h1>Stocks & Licences</h1>
+          <p>Suivi du matériel en stock et des licences logicielles de l'agence Agadir</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Unités en stock</h3>
+              <span class="stat-number" id="stat-unites">35</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Licences actives</h3>
+              <span class="stat-number" id="stat-licences">4</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Expirent sous 30 jours</h3>
+              <span class="stat-number" id="stat-expirent">3</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Coût annuel licences</h3>
+              <span class="stat-number" id="stat-cout">212 300 MAD</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Stock Matériel</h2>
+            <div class="header-tools">
+              <select class="filter-select" id="filtre-statut-stock">
+                <option value="all">Tous les statuts</option>
+                <option>Disponible</option>
+                <option>Stock Bas</option>
+                <option>Épuisé</option>
+              </select>
+              <button type="button" class="btn-primary  admin-only" onclick="ouvrirModalArticle()">
+                <i class="fa-solid fa-plus admin-only"></i> Nouvel Article
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID article</th>
+                <th>Catégorie</th>
+                <th>Modèle</th>
+                <th>Quantité</th>
+                <th class="hide-mobile">Agence</th>
+                <th class="hide-mobile">Fournisseur</th>
+                <th>Statut</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="table-stock"></tbody>
+          </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Licences Logicielles</h2>
+            <div class="header-tools">
+              <button type="button" class="btn-primary  admin-only" onclick="ouvrirModal('modal-licence')">
+                <i class="fa-solid fa-plus"></i> Nouvelle Licence
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Licence</th>
+                <th>Éditeur</th>
+                <th class="hide-mobile">Type</th>
+                <th>Sièges</th>
+                <th class="hide-mobile">Expiration</th>
+                <th class="hide-mobile">Coût annuel</th>
+                <th class="hide-mobile">Pôle assigné</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody id="table-licences"></tbody>
+          </table>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="footer">
+        <span>Norsys Afrique — Parc informatique</span>
+        <span>Contact us: <a href="mailto:norsys@groupe.fr">norsys@groupe.fr</a> / +212 5 24 30 04 62</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ===================== POPUP : NOUVEL ARTICLE ===================== -->
+  <div class="modal-overlay hidden" id="modal-article">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="titre-modal-article">Nouvel Article</h2>
+        <button type="button" class="modal-close" onclick="fermerModal('modal-article')">&times;</button>
+      </div>
+      <!-- Le même formulaire sert à l'ajout et à la modification -->
+      <form id="form-article" onsubmit="enregistrerArticle(event)">
+        <div class="form-group">
+          <label>Catégorie</label>
+          <input type="text" id="art-categorie" placeholder="Ex: Périphérique" required>
+        </div>
+        <div class="form-group">
+          <label>Modèle</label>
+          <input type="text" id="art-modele" placeholder="Ex: Écran Dell UltraSharp 27&quot;" required>
+        </div>
+        <div class="form-group">
+          <label>Quantité</label>
+          <input type="number" id="art-quantite" min="0" value="1" required>
+        </div>
+        <div class="form-group">
+          <label>Agence</label>
+          <input type="text" id="art-agence" placeholder="Ex: Agadir" required>
+        </div>
+        <div class="form-group">
+          <label>Fournisseur</label>
+          <input type="text" id="art-fournisseur" placeholder="Ex: Dell" required>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select id="art-statut" required>
+            <option>Disponible</option>
+            <option>Stock Bas</option>
+            <option>Épuisé</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-outline" onclick="fermerModal('modal-article')">Annuler</button>
+          <button type="submit" class="btn-primary" id="valider-article">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== POPUP : NOUVELLE LICENCE ===================== -->
+  <div class="modal-overlay hidden" id="modal-licence">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Nouvelle Licence</h2>
+        <button type="button" class="modal-close" onclick="fermerModal('modal-licence')">&times;</button>
+      </div>
+      <form id="form-licence" onsubmit="ajouterLicence(event)">
+        <div class="form-group">
+          <label>Nom de la licence</label>
+          <input type="text" id="lic-nom" placeholder="Ex: Microsoft 365 Business" required>
+        </div>
+        <div class="form-group">
+          <label>Éditeur</label>
+          <input type="text" id="lic-editeur" placeholder="Ex: Microsoft" required>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="lic-type" required>
+            <option>Abonnement</option>
+            <option>Perpétuelle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sièges (utilisés/total)</label>
+          <input type="text" id="lic-sieges" placeholder="Ex: 10/20" required>
+        </div>
+        <div class="form-group">
+          <label>Date d'expiration</label>
+          <input type="text" id="lic-expiration" placeholder="Ex: 15 sept. 2026">
+        </div>
+        <div class="form-group">
+          <label>Coût annuel</label>
+          <input type="text" id="lic-cout" placeholder="Ex: 42 000 MAD" required>
+        </div>
+        <div class="form-group">
+          <label>Pôle assigné</label>
+          <input type="text" id="lic-pole" placeholder="Ex: Support Interne" required>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select id="lic-statut" required>
+            <option>Actif</option>
+            <option>Expire bientôt</option>
+            <option>Perpétuelle</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-outline" onclick="fermerModal('modal-licence')">Annuler</button>
+          <button type="submit" class="btn-primary">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+L'assistant officiel du projet fonctionne avec Ollama en local.
+
+Le navigateur envoie une question au serveur local `http://127.0.0.1:8787/assistant`.
+Le serveur vérifie le token Firebase, lit Firestore avec son compte de service externe,
+puis demande une réponse au modèle Ollama `qwen2.5:3b`.
+
+Une modification n'est jamais exécutée directement : le serveur produit une proposition,
+qui doit être confirmée explicitement par un administrateur.
+

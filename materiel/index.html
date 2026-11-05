@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Norsys Afrique — Matériel Dev &amp; QA</title>
+
+  <!-- Applique le thème enregistré avant l'affichage (évite le "flash" blanc) -->
+  <script  type="module">
+    (function () {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+  <script type="module" src="../js/auth-guard.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../Assets/css/role-access.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="../Assets/Norsyslogo.png" alt="Norsys Afrique" class="logo-img logo-light">
+        <img src="../Assets/norsysdark.png" alt="Norsys Afrique" class="logo-img logo-dark">
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="../Dashboard/index.html">Tableau de bord</a></li>
+          <li class="active">
+            <a href="../materiel/index.html" aria-current="page">Matériel Dev &amp; QA</a>
+          </li>
+          <li><a href="../collaborateur/collaborateur.html">Collaborateurs</a></li>
+          <li><a href="../Stock-et-Licences/index.html">Stocks &amp; Licences</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- ================= CONTENU PRINCIPAL ================= -->
+    <main class="main-content">
+
+      <header class="top-header">
+        <button class="menu-toggle" aria-label="Ouvrir la navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="search-bar">
+          <input type="search" id="search-input" placeholder="Rechercher par n° de série, modèle...">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème">
+            <i class="fa-regular fa-moon"></i>
+          </button>
+          <button class="user-profile" aria-label="Profil utilisateur">
+            <i class="fa-solid fa-user"></i>
+          </button>
+          <div id="profileDropdown" class="profile-dropdown hidden">
+                            <div class="profile-session">
+                                <!-- Rempli dynamiquement depuis la session Firebase (js/auth-guard.js) -->
+                                <span class="profile-mail">Chargement de la session...</span>
+                                <span class="profile-status" hidden>
+                                    <span class="profile-status-dot" aria-hidden="true"></span>
+                                    Session active
+                                </span>
+                            </div>
+                            <button type="button" class="profile-logout">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Se déconnecter</span>
+                            </button>
+                            <p class="profile-error" role="alert"></p>
+                        </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <section class="page-title">
+          <h1>Matériel Dev &amp; QA</h1>
+          <p>Gestion des postes de développement et environnements de test — Agadir</p>
+        </section>
+
+        <!-- Cartes de statistiques -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Postes Dev</h3>
+              <span class="stat-number" id="stat-dev">0</span>
+            </div>
+            <div class="stat-icon icon-purple"><i class="fa-solid fa-laptop-code"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Postes QA</h3>
+              <span class="stat-number" id="stat-qa">0</span>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-mobile-screen"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Actifs en service</h3>
+              <span class="stat-number" id="stat-service">0</span>
+            </div>
+            <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>En maintenance</h3>
+              <span class="stat-number" id="stat-maintenance">0</span>
+            </div>
+            <div class="stat-icon icon-yellow"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+          </div>
+        </section>
+
+        <!-- Tableau d'inventaire -->
+        <section class="section-card">
+          <div class="section-header">
+            <h2>Inventaire matériel</h2>
+            <div class="header-tools">
+              <select id="category-filter" class="filter-select">
+                <option value="">Toutes catégories</option>
+              </select>
+              <button type="button" id="add-equipment-btn" class="btn-primary admin-only">
+                <i class="fa-solid fa-plus"></i> Nouvel équipement
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID matériel</th>
+                  <th>Catégorie</th>
+                  <th>Modèle</th>
+                  <th>Système / OS</th>
+                  <th>Statut</th>
+                  <th class="hide-mobile">Assigné à</th>
+                  <th class="hide-mobile">Pôle d'expertise</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <!-- Les lignes sont générées en JS à partir de Assets/js/equipements.js -->
+              <tbody id="inventory-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <span>Norsys Afrique — Parc informatique</span>
+        <span>Contact us: <a href="mailto:norsys@groupe.fr">norsys@groupe.fr</a> / +212 5 24 30 04 62</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ================= MODALE : Équipement ================= -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal-card" class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Nouvel équipement</h2>
+        <button type="button" id="modal-close" class="modal-close" aria-label="Fermer">&times;</button>
+      </div>
+
+      <form id="equipment-form" novalidate>
+        <div class="form-group">
+          <label for="field-id">ID matériel</label>
+          <input id="field-id" name="id" type="text" required placeholder="ex: NRS-LPT-123">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-categorie">Catégorie</label>
+            <select id="field-categorie" name="categorie" required></select>
+          </div>
+          <div class="form-group">
+            <label for="field-statut">Statut</label>
+            <select id="field-statut" name="statut" required>
+              <option value="En service">En service</option>
+              <option value="Labo testing">Labo testing</option>
+              <option value="En stock">En stock</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-modele">Modèle</label>
+            <input id="field-modele" name="modele" type="text" required placeholder="ex: Lenovo T14">
+          </div>
+          <div class="form-group">
+            <label for="field-os">Système / OS</label>
+            <input id="field-os" name="os" type="text" placeholder="ex: Windows 11, macOS, -">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-assigneA">Assigné à</label>
+            <input id="field-assigneA" name="assigneA" type="text" placeholder="ex: Nom du collaborateur">
+          </div>
+          <div class="form-group">
+            <label for="field-pole">Pôle d'expertise</label>
+            <input id="field-pole" name="pole" type="text" placeholder="ex: DevSecOps, QA...">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" class="btn-outline">Annuler</button>
+          <button type="submit" id="modal-submit" class="btn-primary">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODALE : Affectation ================= -->
+  <div id="assign-overlay" class="modal-overlay hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="assign-title">
+      <div class="modal-header">
+        <h2 id="assign-title">Affectation</h2>
+        <button type="button" id="assign-close" class="modal-close" aria-label="Fermer">&times;</button>
+      </div>
+
+      <p id="assign-current" class="assign-current"></p>
+
+      <h3 class="assign-subtitle">Historique des affectations</h3>
+      <div class="table-container">
+        <table class="data-table assign-history">
+          <thead>
+            <tr><th>N°</th><th>Collaborateur</th><th>Remise</th><th>Restitution</th></tr>
+          </thead>
+          <tbody id="assign-history-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Réservé aux administrateurs (role-access.css) ; les règles Firestore refusent de toute façon les autres -->
+      <form id="assign-form" class="admin-only" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="assign-collaborateur">Nouveau détenteur</label>
+            <select id="assign-collaborateur" name="collaborateur" required></select>
+          </div>
+          <div class="form-group">
+            <label for="assign-date">Date</label>
+            <input id="assign-date" name="date" type="date" required>
+          </div>
+        </div>
+        <p id="assign-error" class="assign-error" role="alert"></p>
+        <div class="modal-actions">
+          <button type="button" id="assign-return" class="btn-outline">Restituer</button>
+          <button type="submit" id="assign-submit" class="btn-primary">Affecter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- La liste des équipements doit être chargée avant la logique de la page -->
+  <script type="module" src="../Assets/js/equipements.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

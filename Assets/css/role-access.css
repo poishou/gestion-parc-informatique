@@ -1,0 +1,41 @@
+/* ============================================================
+   CONTRÔLE D'ACCÈS CÔTÉ INTERFACE (RÔLES)
+   ============================================================
+   Masquer les éléments réservés aux administrateurs
+   si l'utilisateur n'a pas le rôle "admin"
+*/
+
+/* Masquer tous les éléments .admin-only par défaut */
+.admin-only {
+  display: none;
+}
+
+/* Afficher les éléments .admin-only UNIQUEMENT si l'utilisateur est admin */
+body[data-role="admin"] .admin-only,
+body[data-role="administrateur"] .admin-only {
+  display: block;
+}
+
+/* Pour les boutons spécifiques */
+body[data-role="admin"] .btn-primary.admin-only,
+body[data-role="administrateur"] .btn-primary.admin-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-only-cell {
+  display: none;
+}
+
+body[data-role="admin"] .admin-only-cell,
+body[data-role="administrateur"] .admin-only-cell {
+  display: table-cell;
+}
+
+/* Désactiver les champs de formulaire en lecture seule (non-admin) */
+body:not([data-role="admin"]):not([data-role="administrateur"]) input[readonly-for-non-admin],
+body:not([data-role="admin"]):not([data-role="administrateur"]) select[readonly-for-non-admin] {
+  pointer-events: none;
+  opacity: 0.6;
+}

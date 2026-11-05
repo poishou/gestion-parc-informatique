@@ -1,0 +1,102 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f4f6; /* Correction du # manquant */
+    margin: 0;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center; /* Centre le texte et le logo */
+}
+
+/* Logo (à adapter selon votre fichier image) */
+.box img {
+    max-width: 150px;
+    margin-bottom: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.box h2 {
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.box p.subtitle {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.box label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    color: #989da5;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.box input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.box button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb; /* Bleu similaire à l'image */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.box button:hover {
+    background-color: #1d4ed8;
+}
+
+.forgot-password {
+    display: block;
+    margin-top: 1rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}   

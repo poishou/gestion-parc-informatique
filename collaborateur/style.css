@@ -1,0 +1,212 @@
+/* ============================================================
+   Collaborateurs — styles spécifiques à cette page
+   ------------------------------------------------------------
+   Tout le reste (coquille, boutons, tableaux, badges, modales,
+   responsive) vient du thème partagé. Ne pas y redéfinir de
+   couleurs, de rayons ni d'espacements : les modifier dans
+   Assets/css/theme.css les applique aux 4 pages.
+   ============================================================ */
+@import url('../Assets/css/theme.css');
+
+/* Sous-titre bleu sous le titre du tableau */
+.table-title p {
+    font-size: 13px;
+    color: var(--primary-blue);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Groupe d'avatars de la carte statistique */
+.avatar-group { display: flex; align-items: center; }
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-white);
+    margin-left: -8px;
+    background-color: var(--bg-main);
+    background-size: cover;
+    background-position: center;
+}
+
+.avatar-group .avatar-circle:first-child { margin-left: 0; }
+
+.avatar-teal-box {
+    width: 36px;
+    height: 36px;
+    background-color: #99F6E4;
+    border-radius: var(--radius-md);
+    margin-left: 12px;
+}
+
+/* Barre d'outils du tableau : recherche, tri et bouton d'ajout
+   partagent la hauteur (40px) des contrôles des autres pages. */
+.table-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.inner-search { position: relative; }
+
+.inner-search input {
+    height: 40px;
+    width: 190px;
+    padding: 0 12px 0 36px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: width 0.3s, border-color var(--transition), box-shadow var(--transition);
+}
+
+.inner-search input:focus {
+    width: 230px;
+    border-color: var(--primary-blue);
+    box-shadow: var(--focus-ring);
+}
+
+.inner-search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    fill: var(--text-muted);
+}
+
+/* Le tableau garde une largeur minimale et défile horizontalement */
+#collabTable { min-width: 760px; }
+
+.collab-name { font-weight: 600; }
+.collab-phone, .collab-email { color: var(--text-muted); }
+
+/* Photo de la ligne, et pastille de repli quand la photo est
+   absente ou introuvable : les initiales du collaborateur. */
+.row-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-main);
+}
+
+.avatar-fallback {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-soft);
+    color: var(--primary-blue);
+    border: 1px solid var(--border-color);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Indicateur de défilement horizontal du tableau (mobile) */
+.mobile-slider-container { display: none; width: 100%; padding: 10px 0; }
+
+.slider-track {
+    width: 100%;
+    height: 6px;
+    background-color: var(--bg-main);
+    border-radius: var(--radius-pill);
+    position: relative;
+}
+
+.slider-thumb {
+    width: 30%;
+    height: 100%;
+    background-color: var(--border-color);
+    border-radius: var(--radius-pill);
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+}
+
+/* ----- Modales Détails / Modification ----- */
+.modal-box-lg { max-width: 520px; }
+
+.modal-photo-wrap {
+    text-align: center;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-photo {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 12px;
+    display: block;
+    border: 1px solid var(--border-color);
+}
+
+.modal-photo-wrap .avatar-fallback {
+    width: 72px;
+    height: 72px;
+    font-size: 22px;
+    margin: 0 auto 12px;
+}
+
+.modal-photo-wrap h3 { font-size: 18px; font-weight: 700; }
+.modal-photo-wrap p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.modal-grid { display: flex; flex-direction: column; }
+
+.detail-field {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+}
+
+.detail-field:last-child { border-bottom: none; }
+.detail-field .field-label { color: var(--text-muted); }
+.detail-field .field-value { color: var(--text-dark); font-weight: 600; text-align: right; }
+
+.edit-field { display: flex; flex-direction: column; padding: 8px 0; }
+
+/* ----- Responsive ----- */
+@media screen and (max-width: 768px) {
+    .mobile-slider-container { display: block; }
+
+    .table-filters { width: 100%; }
+
+    .inner-search,
+    .inner-search input,
+    .table-filters .filter-select,
+    .table-filters .btn-primary { width: 100%; }
+
+    .inner-search input:focus { width: 100%; }
+}
+
+.admin-only {
+    display: none;
+}
+
+body[data-role="admin"] .admin-only,
+body[data-role="administrateur"] .admin-only {
+    display: block;   /* ou inline-flex, selon ton bouton */
+}

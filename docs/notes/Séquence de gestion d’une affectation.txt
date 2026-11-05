@@ -1,0 +1,17 @@
+Séquence de gestion d’une affectation
+La séquence d’une affectation peut être résumée comme suit :
+Administrateur -> Page matériel :
+sélection d'un équipement et d'un collaborateur
+Page matériel -> Firestore :
+lecture des affectations existantes
+Page matériel -> Logique métier :
+recherche de l'affectation active
+Logique métier -> Firestore :
+clôture de l'ancienne affectation
+Page matériel -> Firestore :
+création de la nouvelle affectation
+Page matériel -> Firestore :
+mise à jour de l'équipement
+Firestore -> Page matériel :
+confirmation de l'opération
+La logique de cette opération est centralisée dans le fichier assignment-lifecycle.js.

@@ -1,0 +1,59 @@
+/* ============================================================
+   Stocks & Licences — styles spécifiques à cette page
+   ------------------------------------------------------------
+   Tout le reste (coquille, boutons, tableaux, badges, modales,
+   responsive) vient du thème partagé. Ne pas y redéfinir de
+   couleurs, de rayons ni d'espacements : les modifier dans
+   Assets/css/theme.css les applique aux 4 pages.
+
+   Le mode sombre de cette page passe par la classe « dark-theme »
+   sur <body> (voir script.js) ; le thème partagé alimente ce
+   mécanisme comme celui des autres pages.
+   ============================================================ */
+@import url('../Assets/css/theme.css');
+
+/* Le contenu reste centré sur les très grands écrans */
+.content-inventory {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Le tableau déborde jusqu'aux bords de sa carte lorsqu'il défile */
+.section-card .table-container {
+    margin: 0 -24px;
+    padding: 0 24px;
+}
+
+/* Jauge d'occupation des sièges d'une licence */
+.seat-gauge {
+    width: 70px;
+    height: 4px;
+    margin-top: 6px;
+    background-color: var(--border-color);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.seat-gauge span {
+    display: block;
+    height: 100%;
+    background-color: var(--primary-blue);
+    border-radius: var(--radius-pill);
+}
+
+.licence-ref {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.admin-only {
+    display: none;
+}
+
+body[data-role="admin"] .admin-only,
+body[data-role="administrateur"] .admin-only {
+    display: block;   /* ou inline-flex, selon ton bouton */
+}

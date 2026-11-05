@@ -1,0 +1,12 @@
+{
+  "name": "norsys-parc-seed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed:firestore": "node seed/firestore-seed.mjs",
+    "seed:roles": "node seed/setup-roles.mjs"
+  },
+  "devDependencies": {
+    "firebase-admin": "^12.4.0"
+  }
+}

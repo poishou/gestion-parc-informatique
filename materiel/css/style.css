@@ -1,0 +1,27 @@
+/* ============================================================
+   Matériel Dev & QA — feuille de style de la page
+   ------------------------------------------------------------
+   Cette page n'a aucun style qui lui soit propre : sa coquille,
+   ses cartes, son tableau, ses boutons, ses badges, sa modale et
+   son responsive viennent tous du thème partagé.
+
+   Pour modifier son apparence, éditer Assets/css/theme.css —
+   le changement s'appliquera aux 4 pages.
+   ============================================================ */
+@import url('../../Assets/css/theme.css');
+
+.admin-only {
+    display: none;
+}
+
+body[data-role="admin"] .admin-only,
+body[data-role="administrateur"] .admin-only {
+    display: block;   /* ou inline-flex, selon ton bouton */
+}
+
+/* Modale « Affectation » : historique + formulaire */
+.assign-current { margin: 0 0 12px; font-size: 14px; }
+.assign-subtitle { margin: 8px 0; font-size: 14px; font-weight: 600; }
+.assign-history { font-size: 13px; }
+#assign-form { margin-top: 16px; }
+.assign-error { min-height: 1em; margin: 0 0 8px; color: #C0392B; font-size: 13px; }
