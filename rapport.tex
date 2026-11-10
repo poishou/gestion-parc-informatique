@@ -974,7 +974,7 @@ Les principaux acteurs identifiés sont les suivants :
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{diagramme/usecase_v2.png}
+    \includegraphics[width=0.95\textwidth]{diagramme/usecase.png}
     \caption{Diagramme de cas d’utilisation de l’application}
     \label{fig:usecase}
 \end{figure}
@@ -1005,7 +1005,7 @@ Le diagramme de classes représente les principales entités manipulées par l�
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{diagramme/classes_modele_donnees.png}
+    \includegraphics[width=0.95\textwidth]{diagramme/classes.png}
     \caption{Diagramme de classes et modèle de données}
     \label{fig:classes}
 \end{figure}
@@ -1051,16 +1051,16 @@ Le scénario d’affectation est réservé à l’administrateur. Une affectatio
 
 \subsection{Diagramme d’activité d’une affectation}
 
-Le diagramme d’activité permet de représenter les décisions prises pendant une affectation.
+Le diagramme d’activité permet de représenter les décisions prises pendant une affectation. Il est organisé en trois couloirs : l’administrateur, l’application (page Matériel Dev \& QA) et Cloud Firestore.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.90\textwidth]{diagramme/activite_attribution_staruml.png}
+    \includegraphics[width=0.90\textwidth,height=0.80\textheight,keepaspectratio]{diagramme/activite_affectation.png}
     \caption{Diagramme d’activité d’une affectation}
     \label{fig:activite-affectation}
 \end{figure}
 
-La validation finale vérifie qu’un équipement ne possède pas plusieurs affectations actives. Si cette condition n’est pas respectée, l’opération est refusée.
+L’application vérifie d’abord qu’un équipement ne possède pas déjà plusieurs affectations actives. Si cette condition n’est pas respectée, l’opération est refusée. Sinon, l’affectation active éventuelle est clôturée, la nouvelle affectation est créée, puis la cohérence finale est vérifiée une seconde fois. Les écritures sont enfin envoyées en un seul lot à Firestore, dont les règles de sécurité refusent l’opération si l’utilisateur n’est pas administrateur.
 
 \section{Conception de l’assistant local}
 
@@ -1094,28 +1094,12 @@ Lors d’une question de consultation, le scénario est le suivant :
     \item la réponse est renvoyée au navigateur.
 \end{enumerate}
 
+Le diagramme de séquence suivant représente les échanges entre les composants. Le fragment \texttt{alt} distingue les trois issues possibles : une réponse de consultation, une proposition de modification pour un administrateur, ou un refus pour un utilisateur simple.
+
 \begin{figure}[htbp]
     \centering
-    \begin{tabular}{|p{3.2cm}|p{10.2cm}|}
-        \hline
-        \textbf{Étape} & \textbf{Échange ou traitement} \\
-        \hline
-        1. Utilisateur $\rightarrow$ navigateur & Saisie d’une question dans le widget de l’assistant. \\
-        \hline
-        2. Navigateur $\rightarrow$ serveur Node.js & Envoi de la question et du token Firebase. \\
-        \hline
-        3. Serveur Node.js $\rightarrow$ Firebase Authentication & Vérification du token et du rôle de l’utilisateur. \\
-        \hline
-        4. Serveur Node.js $\rightarrow$ Cloud Firestore & Lecture des données nécessaires à la consultation. \\
-        \hline
-        5. Serveur Node.js $\rightarrow$ Ollama & Transmission de la question pour interprétation. \\
-        \hline
-        6. Ollama $\rightarrow$ serveur Node.js & Retour de l’interprétation ; le serveur filtre les résultats et prépare la réponse. \\
-        \hline
-        7. Serveur Node.js $\rightarrow$ navigateur & Renvoi de la réponse affichée à l’utilisateur. \\
-        \hline
-    \end{tabular}
-    \caption{Séquence de consultation avec l’assistant local}
+    \includegraphics[width=\textwidth,height=0.75\textheight,keepaspectratio]{diagramme/sequence_assistant.png}
+    \caption{Diagramme de séquence de l’assistant local}
     \label{fig:sequence-assistant}
 \end{figure}
 
@@ -2435,7 +2419,30 @@ En somme, ce travail a permis de valider la faisabilité d’une solution de ges
 \noindent Le présent rapport s’inscrit dans le cadre d’un stage d’été réalisé au sein de Norsys Afrique, dans le cadre de la formation d’ingénieur à l’ENSIAS. L’application développée a été conçue pour répondre à un besoin réel de gestion du parc informatique et pour démontrer la capacité à transformer un cahier des charges fonctionnel en un outil exploitable, structuré et sécurisé.
 
 \vspace{0.5cm}
-\noindent Les éléments exposés dans cette annexe illustrent l’architecture générale du système, les principaux écrans et les flux de gestion des équipements, des affectations, des stocks et des licences. Ils complètent la description technique fournie dans le corps du rapport et mettent en évidence l’orientation pratique du projet.
+\noindent Les captures suivantes présentent les principaux écrans de l’application : le tableau de bord, la page de gestion du matériel et la fenêtre d’affectation d’un équipement. Elles complètent la description technique fournie dans le corps du rapport et mettent en évidence l’orientation pratique du projet.
+
+\setcounter{figure}{0}\renewcommand{\thefigure}{A.\arabic{figure}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{diagramme/Tableau_de_bord.png}
+    \caption{Tableau de bord : indicateurs calculés en temps réel et inventaire récent}
+    \label{fig:capture-dashboard}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{diagramme/Page_Materiel.png}
+    \caption{Page Matériel Dev \& QA : statistiques et inventaire avec les actions par équipement}
+    \label{fig:capture-materiel}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{diagramme/Affectation_materiel.png}
+    \caption{Fenêtre d’affectation : historique, choix du nouveau détenteur, affectation ou restitution}
+    \label{fig:capture-affectation}
+\end{figure}
 
 \section*{Annexe B. Extrait de code de l’interface principale}
 \phantomsection
