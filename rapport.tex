@@ -11,6 +11,7 @@
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{longtable}
+\usepackage{float}
 
 % Espacement des lignes dans les tableaux
 \renewcommand{\arraystretch}{1.4}
@@ -1208,7 +1209,7 @@ La collection \texttt{affectations} n’est pas modifiable directement par l’a
 
 La conception UML est directement liée aux fichiers du projet.
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Correspondance entre les éléments de conception et le code}
     \label{tab:correspondance}
@@ -1240,7 +1241,7 @@ La conception UML est directement liée aux fichiers du projet.
         \hline
         Initialisation des données & \texttt{seed/} \\
         \hline
-        Tests métier & \texttt{tests/} et \texttt{functions/assistant-core.test.cjs} \\
+        Tests métier & \texttt{tests/} et \newline \texttt{functions/assistant-core.test.cjs} \\
         \hline
     \end{tabular}
 \end{table}
@@ -1299,7 +1300,7 @@ Les principales technologies utilisées sont présentées dans le tableau suivan
         \hline
         Ollama & Exécution locale du modèle de langage. \\
         \hline
-        qwen2.5:3b & Modèle utilisé pour interpréter les demandes. \\
+        \texttt{qwen2.5:3b} & Modèle utilisé pour interpréter les demandes. \\
         \hline
         GitLab & Partage et gestion des versions du code. \\
         \hline
@@ -1711,7 +1712,7 @@ Le script PowerShell :
 
 Les services utilisent les ports suivants :
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Ports utilisés par l’application}
     \label{tab:ports}
@@ -1873,7 +1874,7 @@ Les principaux composants utilisés sont :
         \hline
         Ollama & Exécution locale du modèle de langage. \\
         \hline
-        qwen2.5:3b & Interprétation des demandes adressées à l’assistant. \\
+        \texttt{qwen2.5:3b} & Interprétation des demandes adressées à l’assistant. \\
         \hline
         Navigateur web & Vérification du comportement des pages. \\
         \hline
@@ -2219,7 +2220,7 @@ Le lanceur vérifie la présence des services suivants :
 
 Les ports utilisés sont :
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Vérification des services locaux}
     \label{tab:services-locaux}
@@ -2305,7 +2306,7 @@ Les tests automatisés réalisés sur le projet ont permis de valider les règle
 
 Les résultats obtenus sont les suivants :
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Résultats globaux des tests automatisés}
     \label{tab:resultats-globaux}
@@ -2523,6 +2524,7 @@ onSnapshot(collection(db, "equipements"), (snapshot) => {
 });
 \end{minted}
 
+\setcounter{figure}{0}\renewcommand{\thefigure}{C.\arabic{figure}}
 \section*{Annexe C. Schéma d’architecture du système}
 \phantomsection
 \addcontentsline{toc}{section}{Annexe C. Schéma d’architecture du système}
@@ -2536,6 +2538,7 @@ onSnapshot(collection(db, "equipements"), (snapshot) => {
     \label{fig:architecture-application}
 \end{figure}
 
+\setcounter{table}{0}\renewcommand{\thetable}{D.\arabic{table}}
 \section*{Annexe D. Résultats détaillés des tests automatisés}
 \phantomsection
 \addcontentsline{toc}{section}{Annexe D. Résultats détaillés des tests automatisés}
